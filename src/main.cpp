@@ -9,8 +9,6 @@ EncodedAudioStream decoder(&i2s, new WAVDecoder()); // Decoding stream
 StreamCopy copier; 
 File audioFile;
 
-int lux;
-
 void setup(){
   Serial.begin(115200);
   AudioLogger::instance().begin(Serial, AudioLogger::Info);  
