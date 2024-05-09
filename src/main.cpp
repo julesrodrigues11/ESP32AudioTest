@@ -5,8 +5,8 @@
 #include "Wire.h"
 
 const int chipSelect = D9;
-I2SStream i2s; // final output of decoded stream
-EncodedAudioStream decoder(&i2s, new WAVDecoder()); // Decoding stream
+I2SStream i2s; // Final output of decoded stream
+EncodedAudioStream decoder(&i2s, new WAVDecoder()); // Decoding Stream
 StreamCopy copier; 
 File audioFile;
 
@@ -25,34 +25,33 @@ void receiveSignal(int numBytes)
 
 void setup(){
   Serial.begin(115200);
-  AudioLogger::instance().begin(Serial, AudioLogger::Info);
+  //AudioLogger::instance().begin(Serial, AudioLogger::Info); // Uncomment for Data Logging
 
   Wire.begin(SLAVE_ADDRESS);
   Wire.onReceive(receiveSignal);
 
-  // setup file
+  // Setup File
   SD.begin(chipSelect);
   audioFile = SD.open("/purr10.wav");
 
-  // setup i2s
+  // Setup I2S
   auto config = i2s.defaultConfig(TX_MODE);
   i2s.begin(config);
 
-  // setup I2S based on sampling rate provided by decoder
+  // Setup I2S based on sampling rate provided by decoder
   decoder.begin();
 
-  // begin copy
+  // Begin copier
   copier.begin(decoder, audioFile);
 }
 
 void loop()
 {
-
   copier.copy();
+  // Replay the audio file by "seeking" to the initial position
+  // Automatically does it at the end of the audio file
   if (audioFile.size() > 0 && audioFile.available()==0)
   {
     audioFile.seek(0);
-    Serial.println("Replay");
   }
-  
 }
